@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastStream", "FastStream\FastStream.csproj", "{A631D30A-89D0-4C09-AB3D-E06B33BE347E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastStream", "FastStream\FastStream.csproj", "{A631D30A-89D0-4C09-AB3D-E06B33BE347E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastStream.Tests", "FastStream.Tests\FastStream.Tests.csproj", "{9FFEDBA2-46D7-4EF9-BCF4-E8146D6AA2CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A631D30A-89D0-4C09-AB3D-E06B33BE347E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A631D30A-89D0-4C09-AB3D-E06B33BE347E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A631D30A-89D0-4C09-AB3D-E06B33BE347E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FFEDBA2-46D7-4EF9-BCF4-E8146D6AA2CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FFEDBA2-46D7-4EF9-BCF4-E8146D6AA2CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FFEDBA2-46D7-4EF9-BCF4-E8146D6AA2CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FFEDBA2-46D7-4EF9-BCF4-E8146D6AA2CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

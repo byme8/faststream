@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -43,6 +42,13 @@ namespace FastStream
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe void Write(short value)
+        {
+            this.Write2Bytes((byte*)&value);
+        }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(int value)
         {
             this.Write4Bytes((byte*)&value);
@@ -68,6 +74,17 @@ namespace FastStream
             this.buffer[this.currentPosition + 7] = *(p + 7);
 
             this.currentPosition += 8;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private unsafe void Write2Bytes(byte* p)
+        {
+            this.EnshureCapacity(2);
+
+            this.buffer[this.currentPosition] = *p;
+            this.buffer[this.currentPosition + 1] = *(p + 1);
+
+            this.currentPosition += 2;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
