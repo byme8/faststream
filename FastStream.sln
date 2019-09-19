@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastStream", "FastStream\Fa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastStream.Tests", "FastStream.Tests\FastStream.Tests.csproj", "{9FFEDBA2-46D7-4EF9-BCF4-E8146D6AA2CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastStream.Benchmark", "FastStream.Benchmark\FastStream.Benchmark.csproj", "{2F944F9C-A48C-46B8-B281-ED2C30D095AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{9FFEDBA2-46D7-4EF9-BCF4-E8146D6AA2CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9FFEDBA2-46D7-4EF9-BCF4-E8146D6AA2CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9FFEDBA2-46D7-4EF9-BCF4-E8146D6AA2CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F944F9C-A48C-46B8-B281-ED2C30D095AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F944F9C-A48C-46B8-B281-ED2C30D095AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F944F9C-A48C-46B8-B281-ED2C30D095AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F944F9C-A48C-46B8-B281-ED2C30D095AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

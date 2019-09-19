@@ -14,13 +14,15 @@ namespace FastStream
         private byte[] buffer = ArrayPool<byte>.Shared.Rent(INITIAL_SIZE);
         private int currentPosition;
 
-        private void EnshureCapacity(int count)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private unsafe void EnshureCapacity(int count)
         {
             if (this.maxBufferIndex < this.currentPosition + count)
             {
                 var oldBuffer = this.buffer;
-                this.buffer = ArrayPool<byte>.Shared.Rent(maxBufferIndex * 2);
-                Buffer.BlockCopy(oldBuffer, 0, this.buffer, 0, oldBuffer.Length);
+                var newSize = (maxBufferIndex + count) * 2;
+                this.buffer = ArrayPool<byte>.Shared.Rent(newSize);
+                Buffer.BlockCopy(oldBuffer, 0, this.buffer, 0, currentPosition);
                 ArrayPool<byte>.Shared.Return(oldBuffer);
 
                 this.maxBufferIndex = this.buffer.Length - 1;

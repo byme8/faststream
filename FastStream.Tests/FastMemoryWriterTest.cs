@@ -2,111 +2,141 @@ using System;
 using System.Linq;
 using System.Text;
 using Xunit;
+using Xunit.Sdk;
 
 namespace FastStream.Tests
 {
     public class FastMemoryWriterTest
     {
-        [Fact]
-        public void Empty()
+        public class Writers
         {
-            var writer = new FastMemoryWriter();
-            var result = writer.ToArray();
 
-            var empty = new byte[0];
-            Assert.True(empty.SequenceEqual(result));
-        }
+            [Fact]
+            public void Empty()
+            {
+                var writer = new FastMemoryWriter();
+                var result = writer.ToArray();
 
-        [Fact]
-        public void Int16()
-        {
-            short digit = 10;
+                var empty = new byte[0];
+                Assert.True(empty.SequenceEqual(result));
+            }
 
-            var writer = new FastMemoryWriter();
-            writer.Write(digit);
-            var result = writer.ToArray();
+            [Fact]
+            public void Int16()
+            {
+                short digit = 10;
 
-            var value = BitConverter.GetBytes(digit);
-            Assert.True(value.SequenceEqual(result));
-        }
+                var writer = new FastMemoryWriter();
+                writer.Write(digit);
+                var result = writer.ToArray();
 
-        [Fact]
-        public void Int32()
-        {
-            int digit = 10;
+                var value = BitConverter.GetBytes(digit);
+                Assert.True(value.SequenceEqual(result));
+            }
 
-            var writer = new FastMemoryWriter();
-            writer.Write(digit);
-            var result = writer.ToArray();
+            [Fact]
+            public void Int32()
+            {
+                int digit = 10;
 
-            var value = BitConverter.GetBytes(digit);
-            Assert.True(value.SequenceEqual(result));
-        }
+                var writer = new FastMemoryWriter();
+                writer.Write(digit);
+                var result = writer.ToArray();
 
-        [Fact]
-        public void Int64()
-        {
-            long digit = 10;
+                var value = BitConverter.GetBytes(digit);
+                Assert.True(value.SequenceEqual(result));
+            }
 
-            var writer = new FastMemoryWriter();
-            writer.Write(digit);
-            var result = writer.ToArray();
+            [Fact]
+            public void Int64()
+            {
+                long digit = 10;
 
-            var value = BitConverter.GetBytes(digit);
-            Assert.True(value.SequenceEqual(result));
-        }
+                var writer = new FastMemoryWriter();
+                writer.Write(digit);
+                var result = writer.ToArray();
 
-        [Fact]
-        public void Float32()
-        {
-            float digit = 10;
+                var value = BitConverter.GetBytes(digit);
+                Assert.True(value.SequenceEqual(result));
+            }
 
-            var writer = new FastMemoryWriter();
-            writer.Write(digit);
-            var result = writer.ToArray();
+            [Fact]
+            public void Float32()
+            {
+                float digit = 10;
 
-            var value = BitConverter.GetBytes(digit);
-            Assert.True(value.SequenceEqual(result));
-        }
+                var writer = new FastMemoryWriter();
+                writer.Write(digit);
+                var result = writer.ToArray();
 
-        [Fact]
-        public void Float64()
-        {
-            double digit = 10;
+                var value = BitConverter.GetBytes(digit);
+                Assert.True(value.SequenceEqual(result));
+            }
 
-            var writer = new FastMemoryWriter();
-            writer.Write(digit);
-            var result = writer.ToArray();
+            [Fact]
+            public void Float64()
+            {
+                double digit = 10;
 
-            var value = BitConverter.GetBytes(digit);
-            Assert.True(value.SequenceEqual(result));
-        }
+                var writer = new FastMemoryWriter();
+                writer.Write(digit);
+                var result = writer.ToArray();
 
-        [Fact]
-        public void String()
-        {
-            var text = "10";
+                var value = BitConverter.GetBytes(digit);
+                Assert.True(value.SequenceEqual(result));
+            }
 
-            var writer = new FastMemoryWriter();
-            writer.Write(text);
-            var result = writer.ToArray();
+            [Fact]
+            public void String()
+            {
+                var text = "10";
 
-            var bytes = BitConverter.GetBytes(text.Length);
+                var writer = new FastMemoryWriter();
+                writer.Write(text);
+                var result = writer.ToArray();
+
+                var bytes = BitConverter.GetBytes(text.Length);
                 bytes = bytes.Concat(Encoding.UTF8.GetBytes(text)).ToArray();
 
-            Assert.True(bytes.SequenceEqual(result));
+                Assert.True(bytes.SequenceEqual(result));
+            }
+
+            [Fact]
+            public void Bytes()
+            {
+                var bytes = new byte[] { 10, 10, 11, 12 };
+
+                var writer = new FastMemoryWriter();
+                writer.Write(bytes);
+                var result = writer.ToArray();
+
+                Assert.True(bytes.SequenceEqual(result));
+            }
         }
 
-        [Fact]
-        public void Bytes()
+        public class ChunkSize
         {
-            var bytes = new byte[] { 10, 10, 11, 12 };
+            [Theory]
+            [InlineData(10)]
+            [InlineData(10_000)]
+            [InlineData(1_000_000)]
 
-            var writer = new FastMemoryWriter();
-            writer.Write(bytes);
-            var result = writer.ToArray();
+            public void AbleToProcess(int size)
+            {
+                var count = 100;
+                var bytes = new byte[size];
 
-            Assert.True(bytes.SequenceEqual(result));
+                using (var writer = new FastMemoryWriter())
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        writer.Write(bytes);
+                    }
+
+                    var result = writer.ToArray();
+                    Assert.True(Enumerable.Repeat(bytes, count).SelectMany(o => o).SequenceEqual(result));
+                }
+            }
         }
     }
 }
