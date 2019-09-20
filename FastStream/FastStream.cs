@@ -8,11 +8,19 @@ namespace FastStream
 {
     public class FastMemoryWriter : IDisposable
     {
+        public static ArrayPool<byte> HugeArrayPool { get; set; } = ArrayPool<byte>.Create(int.MaxValue, 10);
+
         private const int INITIAL_SIZE = 1024;
 
-        private int maxBufferIndex = INITIAL_SIZE - 1;
-        private byte[] buffer = ArrayPool<byte>.Shared.Rent(INITIAL_SIZE);
+
+        private byte[] buffer;
         private int currentPosition;
+        private int maxBufferIndex = INITIAL_SIZE - 1;
+
+        public FastMemoryWriter()
+        {
+            this.buffer = HugeArrayPool.Rent(INITIAL_SIZE);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private unsafe void EnshureCapacity(int count)
@@ -21,10 +29,12 @@ namespace FastStream
             {
                 var oldBuffer = this.buffer;
                 var newSize = (maxBufferIndex + count) * 2;
-                this.buffer = ArrayPool<byte>.Shared.Rent(newSize);
-                Buffer.BlockCopy(oldBuffer, 0, this.buffer, 0, currentPosition);
-                ArrayPool<byte>.Shared.Return(oldBuffer);
+                var newBuffer = HugeArrayPool.Rent(newSize);
 
+                Buffer.BlockCopy(oldBuffer, 0, newBuffer, 0, currentPosition);
+                HugeArrayPool.Return(oldBuffer);
+
+                this.buffer = newBuffer;
                 this.maxBufferIndex = this.buffer.Length - 1;
             }
         }

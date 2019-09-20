@@ -22,33 +22,41 @@ namespace FastStream.Benchmark
     [MemoryDiagnoser]
     public class FastStreamVSMemoryStream
     {
-        [Params(/*10, 10_000, */1_000_000)]
+        [Params(10, 10_000, 500_000)]
         public int Size { get; set; }
+
+        [Params(10, 100, 1000)]
+        public int ItemCount { get; set; }
 
 
         [Benchmark]
         public void Bytes()
         {
             var data = new byte[this.Size];
-            using (var memory = new MemoryStream())
+            for (int j = 0; j < 10; j++)
             {
-                for (int i = 0; i < 100; i++)
+                using (var memory = new MemoryStream())
                 {
-                    memory.Write(data);
+                    for (int i = 0; i < this.ItemCount; i++)
+                    {
+                        memory.Write(data);
+                    }
                 }
             }
-
         }
 
         [Benchmark]
         public void FastBytes()
         {
             var data = new byte[this.Size];
-            using (var memory = new FastMemoryWriter())
+            for (int j = 0; j < 10; j++)
             {
-                for (int i = 0; i < 100; i++)
+                using (var memory = new FastMemoryWriter())
                 {
-                    memory.Write(data);
+                    for (int i = 0; i < this.ItemCount; i++)
+                    {
+                        memory.Write(data);
+                    }
                 }
             }
         }
