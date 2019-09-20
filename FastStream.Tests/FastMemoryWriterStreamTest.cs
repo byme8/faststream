@@ -56,6 +56,20 @@ namespace FastStream.Tests
         }
 
         [Fact]
+        public void TwoSeeks()
+        {
+            var stream = new FastMemoryWriter();
+            stream.Write("JonnoJ");
+            var initilPoisition = stream.Position;
+            stream.Seek(-2, System.IO.SeekOrigin.Current);
+            Assert.Equal(initilPoisition - 2, stream.Position);
+
+            stream.Seek(-2, System.IO.SeekOrigin.Current);
+            Assert.Equal(initilPoisition - 4, stream.Position);
+            Assert.Equal(initilPoisition, stream.Length);
+        }
+
+        [Fact]
         public void SeekToEnd()
         {
             var stream = new FastMemoryWriter();

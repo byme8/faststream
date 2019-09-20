@@ -32,7 +32,7 @@ namespace FastStream
             get => this.currentPosition;
             set
             {
-                if (value < this.currentPosition)
+                if (value < this.currentPosition && this.length < this.currentPosition)
                 {
                     this.length = this.currentPosition;
                 }
