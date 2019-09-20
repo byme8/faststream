@@ -1,42 +1,65 @@
 ﻿using System;
 using System.Buffers;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace FastStream
 {
-    public class FastMemoryWriter : IDisposable
+    public class FastMemoryWriter : Stream, IDisposable
     {
+        private const int INITIAL_SIZE = 1024;
+        private byte[] buffer;
+        private long currentPosition;
+        private long length;
+
+        private int maxBufferIndex = INITIAL_SIZE - 1;
         public static ArrayPool<byte> HugeArrayPool { get; set; } = ArrayPool<byte>.Create(int.MaxValue, 10);
 
-        private const int INITIAL_SIZE = 1024;
+        public override bool CanRead => true;
 
+        public override bool CanSeek => true;
 
-        private byte[] buffer;
-        private int currentPosition;
-        private int maxBufferIndex = INITIAL_SIZE - 1;
+        public override bool CanWrite => true;
 
+        public override long Length
+            => this.length < this.currentPosition ?
+                this.currentPosition :
+                this.length;
+
+        public override long Position
+        {
+            get => this.currentPosition;
+            set
+            {
+                if (value < this.currentPosition)
+                {
+                    this.length = this.currentPosition;
+                }
+                this.currentPosition = value;
+            }
+        }
         public FastMemoryWriter()
         {
             this.buffer = HugeArrayPool.Rent(INITIAL_SIZE);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void EnshureCapacity(int count)
+        public byte[] Merge(FastMemoryWriter writer)
         {
-            if (this.maxBufferIndex < this.currentPosition + count)
-            {
-                var oldBuffer = this.buffer;
-                var newSize = (maxBufferIndex + count) * 2;
-                var newBuffer = HugeArrayPool.Rent(newSize);
+            var bytes = new byte[this.currentPosition + writer.currentPosition];
+            Buffer.BlockCopy(this.buffer, 0, bytes, 0, (int)this.currentPosition);
+            Buffer.BlockCopy(writer.buffer, 0, bytes, (int)this.currentPosition, (int)writer.currentPosition);
 
-                Buffer.BlockCopy(oldBuffer, 0, newBuffer, 0, currentPosition);
-                HugeArrayPool.Return(oldBuffer);
+            return bytes;
+        }
 
-                this.buffer = newBuffer;
-                this.maxBufferIndex = this.buffer.Length - 1;
-            }
+        public byte[] ToArray()
+        {
+            var resultBuffer = new byte[this.currentPosition];
+            Buffer.BlockCopy(this.buffer, 0, resultBuffer, 0, (int)this.currentPosition);
+
+            return resultBuffer;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -59,7 +82,6 @@ namespace FastStream
             this.Write2Bytes((byte*)&value);
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(int value)
         {
@@ -73,19 +95,58 @@ namespace FastStream
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void Write8Bytes(byte* p)
+        public unsafe void Write(float value)
         {
-            this.EnshureCapacity(8);
-            this.buffer[this.currentPosition] = *p;
-            this.buffer[this.currentPosition + 1] = *(p + 1);
-            this.buffer[this.currentPosition + 2] = *(p + 2);
-            this.buffer[this.currentPosition + 3] = *(p + 3);
-            this.buffer[this.currentPosition + 4] = *(p + 4);
-            this.buffer[this.currentPosition + 5] = *(p + 5);
-            this.buffer[this.currentPosition + 6] = *(p + 6);
-            this.buffer[this.currentPosition + 7] = *(p + 7);
+            this.Write4Bytes((byte*)&value);
+        }
 
-            this.currentPosition += 8;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe void Write(double value)
+        {
+            this.Write8Bytes((byte*)&value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(byte[] value)
+        {
+            this.Write(value, 0, value.Length);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(Span<byte> value)
+        {
+            var length = value.Length;
+            this.EnshureCapacity(length);
+
+            var destination = this.buffer.AsSpan().Slice((int)this.currentPosition);
+            value.CopyTo(destination);
+            this.currentPosition += length;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe void Write(byte value)
+        {
+            this.EnshureCapacity(1);
+
+            this.buffer[this.currentPosition] = value;
+            this.currentPosition++;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private unsafe void EnshureCapacity(int count)
+        {
+            if (this.maxBufferIndex < this.currentPosition + count)
+            {
+                var oldBuffer = this.buffer;
+                var newSize = (maxBufferIndex + count) * 2;
+                var newBuffer = HugeArrayPool.Rent(newSize);
+
+                Buffer.BlockCopy(oldBuffer, 0, newBuffer, 0, (int)currentPosition);
+                HugeArrayPool.Return(oldBuffer);
+
+                this.buffer = newBuffer;
+                this.maxBufferIndex = this.buffer.Length - 1;
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -113,57 +174,69 @@ namespace FastStream
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void Write(float value)
+        private unsafe void Write8Bytes(byte* p)
         {
-            this.Write4Bytes((byte*)&value);
+            this.EnshureCapacity(8);
+            this.buffer[this.currentPosition] = *p;
+            this.buffer[this.currentPosition + 1] = *(p + 1);
+            this.buffer[this.currentPosition + 2] = *(p + 2);
+            this.buffer[this.currentPosition + 3] = *(p + 3);
+            this.buffer[this.currentPosition + 4] = *(p + 4);
+            this.buffer[this.currentPosition + 5] = *(p + 5);
+            this.buffer[this.currentPosition + 6] = *(p + 6);
+            this.buffer[this.currentPosition + 7] = *(p + 7);
+
+            this.currentPosition += 8;
+        }
+      
+        public override void Flush()
+        {
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void Write(double value)
+        public override int Read(byte[] inputBuffer, int offset, int count)
         {
-            this.Write8Bytes((byte*)&value);
+            Buffer.BlockCopy(this.buffer, (int)this.Position, inputBuffer, offset, count);
+            return count;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(byte[] value)
+        public override long Seek(long offset, SeekOrigin origin)
         {
-            var length = value.Length;
-            this.EnshureCapacity(length);
+            switch (origin)
+            {
+                case SeekOrigin.Begin:
+                    this.Position = offset;
+                    break;
 
-            Buffer.BlockCopy(value, 0, this.buffer, this.currentPosition, value.Length);
-            this.currentPosition += length;
+                case SeekOrigin.Current:
+                    this.Position += offset;
+                    break;
+
+                case SeekOrigin.End:
+                    this.Position = this.Length + offset;
+                    break;
+            }
+
+            return this.Position;
         }
 
-        public byte[] Merge(FastMemoryWriter writer)
+        public override void SetLength(long value)
         {
-            var bytes = new byte[this.currentPosition + writer.currentPosition];
-            Buffer.BlockCopy(this.buffer, 0, bytes, 0, this.currentPosition);
-            Buffer.BlockCopy(writer.buffer, 0, bytes, this.currentPosition, writer.currentPosition);
-
-            return bytes;
+            this.EnshureCapacity((int)value);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void Write(byte value)
+        public override void Write(byte[] buffer, int offset, int count)
         {
-            this.EnshureCapacity(1);
+            this.EnshureCapacity(count);
 
-            this.buffer[this.currentPosition] = value;
-            this.currentPosition++;
-        }
-
-        public byte[] ToArray()
-        {
-            var resultBuffer = new byte[this.currentPosition];
-            Buffer.BlockCopy(this.buffer, 0, resultBuffer, 0, this.currentPosition);
-
-            return resultBuffer;
+            Buffer.BlockCopy(buffer, offset, this.buffer, (int)this.currentPosition, count);
+            this.currentPosition += count;
         }
 
         #region IDisposable Support
+
         private bool disposedValue = false; // To detect redundant calls
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
@@ -176,13 +249,7 @@ namespace FastStream
                 disposedValue = true;
             }
         }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-        #endregion
-
+        #endregion IDisposable Support
     }
 
     public class SchemaPackReader : BinaryReader

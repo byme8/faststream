@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Buffers;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
+using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 
 namespace FastStream.Benchmark
@@ -11,11 +13,61 @@ namespace FastStream.Benchmark
     {
         static void Main(string[] args)
         {
-            //var a = new FastStreamVSMemoryStream() { Size = 1_000_000 };
-            //a.Bytes();
-            //a.FastBytes();
-
             BenchmarkRunner.Run<FastStreamVSMemoryStream>();
+            //BenchmarkRunner.Run<FastStreamVSMemoryStreamWithBinaryWriter>();
+        }
+    }
+
+    public class FastStreamVSMemoryStreamWithBinaryWriter
+    {
+        [Params(10, 100, 1000)]
+        public int ItemCount { get; set; }
+
+        [Benchmark]
+        public void BytesBinaryWriter()
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                using (var memory = new MemoryStream())
+                using (var writer = new BinaryWriter(memory))
+                {
+                    for (int i = 0; i < this.ItemCount; i++)
+                    {
+                        writer.Write(1.0);
+                    }
+                }
+            }
+        }
+
+        [Benchmark]
+        public void FastBytesBinaryWriter()
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                using (var memory = new FastMemoryWriter())
+                using (var writer = new BinaryWriter(memory))
+                {
+                    for (int i = 0; i < this.ItemCount; i++)
+                    {
+                        writer.Write(1.0);
+                    }
+                }
+            }
+        }
+
+        [Benchmark]
+        public void FastBytes()
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                using (var memory = new FastMemoryWriter())
+                {
+                    for (int i = 0; i < this.ItemCount; i++)
+                    {
+                        memory.Write(1.0);
+                    }
+                }
+            }
         }
     }
 
@@ -39,7 +91,7 @@ namespace FastStream.Benchmark
                 {
                     for (int i = 0; i < this.ItemCount; i++)
                     {
-                        memory.Write(data);
+                        memory.Write(data, 0, data.Length);
                     }
                 }
             }
@@ -55,7 +107,7 @@ namespace FastStream.Benchmark
                 {
                     for (int i = 0; i < this.ItemCount; i++)
                     {
-                        memory.Write(data);
+                        memory.Write(data, 0, data.Length);
                     }
                 }
             }

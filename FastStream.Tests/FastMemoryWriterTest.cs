@@ -1,5 +1,7 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Xunit;
 using Xunit.Sdk;
@@ -108,6 +110,21 @@ namespace FastStream.Tests
 
                 var writer = new FastMemoryWriter();
                 writer.Write(bytes);
+                writer.Seek(0, System.IO.SeekOrigin.Begin);
+
+                var result = new byte[4];
+                writer.Read(result);
+
+                Assert.True(bytes.SequenceEqual(result));
+            }
+
+            [Fact]
+            public void Bytesv2()
+            {
+                var bytes = new byte[] { 10, 10, 11, 12 };
+
+                var writer = new FastMemoryWriter();
+                writer.Write(bytes, 0, bytes.Length);
                 var result = writer.ToArray();
 
                 Assert.True(bytes.SequenceEqual(result));
