@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Authors>byme</Authors>
+    <Company />
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
