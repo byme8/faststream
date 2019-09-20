@@ -142,6 +142,7 @@ namespace FastStream
                 var newBuffer = HugeArrayPool.Rent(newSize);
 
                 Buffer.BlockCopy(oldBuffer, 0, newBuffer, 0, (int)currentPosition);
+                HugeArrayPool.Return(oldBuffer);
 
                 this.buffer = newBuffer;
                 this.maxBufferIndex = this.buffer.Length - 1;
