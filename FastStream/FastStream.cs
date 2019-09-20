@@ -195,8 +195,14 @@ namespace FastStream
 
         public override int Read(byte[] inputBuffer, int offset, int count)
         {
-            Buffer.BlockCopy(this.buffer, (int)this.Position, inputBuffer, offset, count);
-            return count;
+            var dataLength = this.Length - this.Position;
+            var toRead = (int)Math.Min(dataLength, count);
+
+            Buffer.BlockCopy(this.buffer, (int)this.Position, inputBuffer, offset, toRead);
+
+            this.Position += toRead;
+
+            return toRead;
         }
 
         public override long Seek(long offset, SeekOrigin origin)

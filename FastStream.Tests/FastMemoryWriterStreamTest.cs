@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -8,6 +9,41 @@ namespace FastStream.Tests
 {
     public class FastMemoryWriterStreamTest
     {
+        [Fact]
+        public void Read()
+        {
+            var text = "JonnoJ";
+            var textBytes = Encoding.UTF8.GetBytes(text);
+
+            var stream = new FastMemoryWriter();
+            stream.Write(text);
+            stream.Seek(0, System.IO.SeekOrigin.Begin);
+
+            var result = new byte[stream.Length];
+            stream.Read(result, 0, result.Length);
+
+            // skip string length
+            Assert.True(textBytes.SequenceEqual(result.Skip(4)));
+        }
+
+        [Fact]
+        public void ReadOnEmpty()
+        {
+            var text = "JonnoJ";
+            var textBytes = Encoding.UTF8.GetBytes(text);
+
+            var stream = new FastMemoryWriter();
+            stream.Write(text);
+            stream.Seek(0, System.IO.SeekOrigin.Begin);
+
+            var result = new byte[stream.Length];
+            var read = stream.Read(result, 0, result.Length);
+            Assert.Equal(result.Length, read);
+
+            read = stream.Read(result, 0, result.Length);
+            Assert.Equal(0, read);
+        }
+
 
         [Fact]
         public void SeekToBegin()
