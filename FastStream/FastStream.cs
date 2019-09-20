@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -14,7 +13,7 @@ namespace FastStream
         private long currentPosition;
         private long length;
 
-        private int maxBufferIndex = INITIAL_SIZE - 1;
+        private int maxBufferIndex;
         public static ArrayPool<byte> HugeArrayPool { get; set; } = ArrayPool<byte>.Create(int.MaxValue, 10);
 
         public override bool CanRead => true;
@@ -43,6 +42,7 @@ namespace FastStream
         public FastMemoryWriter()
         {
             this.buffer = HugeArrayPool.Rent(INITIAL_SIZE);
+            this.maxBufferIndex = this.buffer.Length - 1;
         }
 
         public byte[] Merge(FastMemoryWriter writer)
@@ -142,7 +142,6 @@ namespace FastStream
                 var newBuffer = HugeArrayPool.Rent(newSize);
 
                 Buffer.BlockCopy(oldBuffer, 0, newBuffer, 0, (int)currentPosition);
-                HugeArrayPool.Return(oldBuffer);
 
                 this.buffer = newBuffer;
                 this.maxBufferIndex = this.buffer.Length - 1;
@@ -188,7 +187,7 @@ namespace FastStream
 
             this.currentPosition += 8;
         }
-      
+
         public override void Flush()
         {
         }
@@ -258,9 +257,9 @@ namespace FastStream
         #endregion IDisposable Support
     }
 
-    public class SchemaPackReader : BinaryReader
+    public class FastReader : BinaryReader
     {
-        public SchemaPackReader(Stream input)
+        public FastReader(Stream input)
             : base(input, Encoding.UTF8, true)
         {
         }

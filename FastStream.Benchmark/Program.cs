@@ -1,10 +1,5 @@
-﻿using System;
-using System.Buffers;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
+﻿using System.IO;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Order;
-using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 
 namespace FastStream.Benchmark
@@ -18,6 +13,7 @@ namespace FastStream.Benchmark
         }
     }
 
+    [MemoryDiagnoser]
     public class FastStreamVSMemoryStreamWithBinaryWriter
     {
         [Params(10, 100, 1000)]
