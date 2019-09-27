@@ -91,7 +91,7 @@ namespace FastStream.Tests
             [Fact]
             public void String()
             {
-                var text = "10";
+                var text = "lorem te ipsum";
 
                 var writer = new FastMemoryWriter();
                 writer.Write(text);

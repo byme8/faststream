@@ -83,6 +83,12 @@ namespace FastStream
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe void Write(char value)
+        {
+            this.Write2Bytes((byte*)&value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(int value)
         {
             this.Write4Bytes((byte*)&value);
