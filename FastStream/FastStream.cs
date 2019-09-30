@@ -8,13 +8,14 @@ namespace FastStream
 {
     public class FastMemoryWriter : Stream, IDisposable
     {
-        private const int INITIAL_SIZE = 1024;
+        private const int INITIAL_SIZE = 200;
+
+        private ArrayPool<byte> pool;
         private byte[] buffer;
         private long currentPosition;
         private long length;
 
         private int maxBufferIndex;
-        public static ArrayPool<byte> HugeArrayPool { get; set; } = ArrayPool<byte>.Create(int.MaxValue, 10);
 
         public override bool CanRead => true;
 
@@ -39,9 +40,24 @@ namespace FastStream
                 this.currentPosition = value;
             }
         }
+
+
         public FastMemoryWriter()
+            : this(INITIAL_SIZE)
         {
-            this.buffer = HugeArrayPool.Rent(INITIAL_SIZE);
+
+        }
+
+        public FastMemoryWriter(int initialSize)
+            : this(ArrayPool<byte>.Create(int.MaxValue, 10), initialSize)
+        {
+
+        }
+
+        public FastMemoryWriter(ArrayPool<byte> pool, int initialSize)
+        {
+            this.pool = pool;
+            this.buffer = this.pool.Rent(initialSize);
             this.maxBufferIndex = this.buffer.Length - 1;
         }
 
@@ -145,10 +161,10 @@ namespace FastStream
             {
                 var oldBuffer = this.buffer;
                 var newSize = (maxBufferIndex + count) * 2;
-                var newBuffer = HugeArrayPool.Rent(newSize);
+                var newBuffer = this.pool.Rent(newSize);
 
                 Buffer.BlockCopy(oldBuffer, 0, newBuffer, 0, (int)currentPosition);
-                HugeArrayPool.Return(oldBuffer);
+                this.pool.Return(oldBuffer);
 
                 this.buffer = newBuffer;
                 this.maxBufferIndex = this.buffer.Length - 1;
@@ -254,7 +270,7 @@ namespace FastStream
             {
                 if (disposing)
                 {
-                    ArrayPool<byte>.Shared.Return(this.buffer);
+                    this.pool.Return(this.buffer);
                 }
 
                 this.buffer = null;
