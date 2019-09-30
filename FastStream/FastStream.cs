@@ -8,7 +8,7 @@ namespace FastStream
 {
     public class FastMemoryWriter : Stream, IDisposable
     {
-        private const int INITIAL_SIZE = 200;
+        private const int INITIAL_SIZE = 1024;
 
         private ArrayPool<byte> pool;
         private byte[] buffer;
@@ -16,6 +16,8 @@ namespace FastStream
         private long length;
 
         private int maxBufferIndex;
+
+        public static ArrayPool<byte> HugeArrayPool { get; set; } = ArrayPool<byte>.Create(int.MaxValue, 10);
 
         public override bool CanRead => true;
 
@@ -43,13 +45,13 @@ namespace FastStream
 
 
         public FastMemoryWriter()
-            : this(INITIAL_SIZE)
+            : this(HugeArrayPool, INITIAL_SIZE)
         {
 
         }
 
         public FastMemoryWriter(int initialSize)
-            : this(ArrayPool<byte>.Create(int.MaxValue, 10), initialSize)
+            : this(HugeArrayPool, initialSize)
         {
 
         }
