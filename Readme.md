@@ -1,6 +1,6 @@
-The goal of the project to make faster MemoryStream powered by new dotnet core APIs. The main power gain happened because classic allocations with 'new' operator is replaced by ArrayPool.
+The goal of the project to make faster MemoryStream powered by new dotnet core APIs. The main power gain happened because classic allocations is replaced by ArrayPool.
 
-You can use  ``` FastMemoryWriter ``` to write into memory like that:
+You can use  ``` FastMemoryWriter ``` like that:
 
 ``` cs
 
