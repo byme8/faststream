@@ -8,8 +8,8 @@ namespace FastStream.Benchmark
     {
         static void Main(string[] args)
         {
-            BenchmarkRunner.Run<FastStreamVSMemoryStream>();
-            //BenchmarkRunner.Run<FastStreamVSMemoryStreamWithBinaryWriter>();
+            //BenchmarkRunner.Run<FastStreamVSMemoryStream>();
+            BenchmarkRunner.Run<FastStreamVSMemoryStreamWithBinaryWriter>();
         }
     }
 
@@ -20,7 +20,7 @@ namespace FastStream.Benchmark
         public int ItemCount { get; set; }
 
         [Benchmark]
-        public void BytesBinaryWriter()
+        public void MemoryStreamAndBinaryWriter()
         {
             for (int j = 0; j < 10; j++)
             {
@@ -31,12 +31,14 @@ namespace FastStream.Benchmark
                     {
                         writer.Write(1.0);
                     }
+
+                    var bytes = memory.ToArray();
                 }
             }
         }
 
         [Benchmark]
-        public void FastBytesBinaryWriter()
+        public void FastMemoryWriterAndBinaryWriter()
         {
             for (int j = 0; j < 10; j++)
             {
@@ -47,12 +49,14 @@ namespace FastStream.Benchmark
                     {
                         writer.Write(1.0);
                     }
+
+                    var bytes = memory.ToArray();
                 }
             }
         }
 
-        //[Benchmark]
-        public void FastBytes()
+        [Benchmark]
+        public void OnlyFastMemoryWriter()
         {
             for (int j = 0; j < 10; j++)
             {
@@ -62,6 +66,8 @@ namespace FastStream.Benchmark
                     {
                         memory.Write(1.0);
                     }
+                 
+                    var bytes = memory.ToArray();
                 }
             }
         }
