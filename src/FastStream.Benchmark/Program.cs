@@ -8,8 +8,8 @@ namespace FastStream.Benchmark
     {
         static void Main(string[] args)
         {
-            //BenchmarkRunner.Run<FastStreamVSMemoryStream>();
-            BenchmarkRunner.Run<FastStreamVSMemoryStreamWithBinaryWriter>();
+            BenchmarkRunner.Run<FastStreamVSMemoryStream>();
+            //BenchmarkRunner.Run<FastStreamVSMemoryStreamWithBinaryWriter>();
         }
     }
 
@@ -66,7 +66,7 @@ namespace FastStream.Benchmark
                     {
                         memory.Write(1.0);
                     }
-                 
+
                     var bytes = memory.ToArray();
                 }
             }
@@ -76,7 +76,7 @@ namespace FastStream.Benchmark
     [MemoryDiagnoser]
     public class FastStreamVSMemoryStream
     {
-        [Params(10, 10_000, 500_000)]
+        [Params(100, 100_000)]
         public int Size { get; set; }
 
         [Params(10, 100, 1000)]
@@ -95,6 +95,8 @@ namespace FastStream.Benchmark
                     {
                         memory.Write(data, 0, data.Length);
                     }
+
+                    var bytes = memory.ToArray();
                 }
             }
         }
@@ -111,6 +113,8 @@ namespace FastStream.Benchmark
                     {
                         memory.Write(data, 0, data.Length);
                     }
+
+                    var bytes = memory.ToArray();
                 }
             }
         }
