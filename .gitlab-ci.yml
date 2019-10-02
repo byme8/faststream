@@ -1,0 +1,12 @@
+faststream_nuget_publish:
+    image: "mcr.microsoft.com/dotnet/core/sdk:3.0"
+    
+    only:
+      changes:
+          - src/**/*
+    
+    before_script:
+        - dotnet
+    
+    script:
+      - pwsh ./build/build.ps1 --publish
