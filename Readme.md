@@ -1,6 +1,6 @@
 The goal of the project to make faster MemoryStream powered by new dotnet core APIs. The main power gain happened because classic allocations is replaced by ArrayPool.
 
-You install via nuget. Search for ``` FastStream ```.
+You can install it via nuget. Search for ``` FastStream ```.
 
 You can use  ``` FastMemoryWriter ``` like that:
 
