@@ -1,7 +1,13 @@
-The goal of the project to make faster MemoryStream powered by new dotnet core APIs. The main power gain happened because classic allocations is replaced by ArrayPool.
+The goal of the project to make faster MemoryStream powered by new dotnet core APIs. 
+The main power gain happened because classic allocations is replaced by ArrayPool.
 
+[![Build status](https://ci.appveyor.com/api/projects/status/mxi7d4xhe7afjpw0?svg=true)](https://ci.appveyor.com/project/byme8/faststream)
+
+
+### Nuget
 You can install it via nuget. Search for ``` FastStream ```.
 
+### Writer
 You can use  ``` FastMemoryWriter ``` like that:
 
 ``` cs
@@ -50,7 +56,7 @@ If you replace ``` BinaryWriter ``` by ``` FastMemoryWriter ``` you can gain up 
 
 Also it's good to mention there is noticeable difference in memory allocation in favor of ``` FastMemoryWriter ```.
 
-
+### Reader
 To read data you can use ``` FastReader ```. Basically it's a BinaryReader with minor changes inside:
 ```
 using (var memory = new FastReader())
