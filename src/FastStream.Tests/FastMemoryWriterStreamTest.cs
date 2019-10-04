@@ -93,5 +93,18 @@ namespace FastStream.Tests
 
             Assert.Equal(result - 1, stream.Position);
         }
+
+        [Fact]
+        public void SetLength()
+        {
+            var stream = new FastMemoryWriter();
+            stream.Write("JonnoJJonnoJJonnoJJonnoJ");
+
+            var newLength = 10;
+            stream.SetLength(newLength);
+
+            Assert.Equal(newLength, stream.Length);
+            Assert.Equal(newLength, stream.Position);
+        }
     }
 }

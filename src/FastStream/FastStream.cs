@@ -161,16 +161,23 @@ namespace FastStream
         {
             if (this.maxBufferIndex < this.currentPosition + count)
             {
-                var oldBuffer = this.buffer;
                 var newSize = (maxBufferIndex + count) * 2;
-                var newBuffer = this.pool.Rent(newSize);
-
-                Buffer.BlockCopy(oldBuffer, 0, newBuffer, 0, (int)currentPosition);
-                this.pool.Return(oldBuffer);
-
-                this.buffer = newBuffer;
-                this.maxBufferIndex = this.buffer.Length - 1;
+                this.SetLengthInternal(newSize);
             }
+        }
+
+        private unsafe void SetLengthInternal(int newSize)
+        {
+            var oldBuffer = this.buffer;
+            var newBuffer = this.pool.Rent(newSize);
+
+            var newPosition = Math.Min((int)currentPosition, newSize);
+            Buffer.BlockCopy(oldBuffer, 0, newBuffer, 0, newPosition);
+            this.pool.Return(oldBuffer);
+
+            this.buffer = newBuffer;
+            this.currentPosition = newPosition;
+            this.maxBufferIndex = this.buffer.Length - 1;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -251,7 +258,7 @@ namespace FastStream
 
         public override void SetLength(long value)
         {
-            this.EnshureCapacity((int)value);
+                this.SetLengthInternal((int)value);
         }
 
         public override void Write(byte[] buffer, int offset, int count)
