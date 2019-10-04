@@ -3,6 +3,7 @@ using System.Buffers;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FastStream
 {
@@ -133,6 +134,13 @@ namespace FastStream
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(byte[] value)
         {
+            this.Write(value, 0, value.Length);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void WriteByteArray(byte[] value)
+        {
+            this.Write(value.Length);
             this.Write(value, 0, value.Length);
         }
 
@@ -294,6 +302,24 @@ namespace FastStream
         public FastReader(Stream input)
             : base(input, Encoding.UTF8, true)
         {
+        }
+
+        public byte[] ReadByteArray()
+        {
+            var length = this.ReadInt32();
+            var bytes = new byte[length];
+            var position = 0;
+            do
+            {
+                var read = this.Read(bytes, position, length - position);
+                if (read == 0)
+                {
+                    throw new EndOfStreamException();
+                }
+                position += read;
+            } while (position != length);
+            
+            return bytes;
         }
 
         public override string ReadString()
