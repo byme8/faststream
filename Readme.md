@@ -17,7 +17,7 @@ using (var writer = new BinaryWriter(memory))
 
 ```
 
-but because ``` FastMemoryWriter ``` implements interfaces ``` BinaryWriter ``` you can use it like that:
+but because ``` FastMemoryWriter ``` implements interfaces of ``` BinaryWriter ``` you can use it like that:
 
 ``` cs
 
@@ -49,3 +49,16 @@ As you can see in combination ``` BinaryWriter ``` and ``` FastMemoryWriter ``` 
 If you replace ``` BinaryWriter ``` by ``` FastMemoryWriter ``` you can gain up to ~70% better perfomance.
 
 Also it's good to mention there is noticeable difference in memory allocation in favor of ``` FastMemoryWriter ```.
+
+
+To read data you can use ``` FastReader ```. Basically it's a BinaryReader with minor changes inside:
+```
+using (var memory = new FastReader())
+{
+    for (int i = 0; i < this.ItemCount; i++)
+    {
+        var value = memory.ReadDouble();
+    }
+}
+
+```
