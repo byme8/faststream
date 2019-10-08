@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FastStream
 {
-    public class FastMemoryWriter : Stream, IDisposable
+    public class FastMemoryWriter : Stream
     {
         private const int INITIAL_SIZE = 1024;
 
@@ -17,8 +17,6 @@ namespace FastStream
         private long length;
 
         private int maxBufferIndex;
-
-        public static ArrayPool<byte> HugeArrayPool { get; set; } = ArrayPool<byte>.Create(int.MaxValue, 10);
 
         public override bool CanRead => true;
 
@@ -46,18 +44,18 @@ namespace FastStream
 
 
         public FastMemoryWriter()
-            : this(HugeArrayPool, INITIAL_SIZE)
+             : this(ArrayPool<byte>.Shared, INITIAL_SIZE)
         {
 
         }
 
         public FastMemoryWriter(int initialSize)
-            : this(HugeArrayPool, initialSize)
+            : this(ArrayPool<byte>.Shared, initialSize)
         {
 
         }
 
-        public FastMemoryWriter(ArrayPool<byte> pool, int initialSize)
+        public FastMemoryWriter(ArrayPool<byte> pool, int initialSize = INITIAL_SIZE)
         {
             this.pool = pool;
             this.buffer = this.pool.Rent(initialSize);
