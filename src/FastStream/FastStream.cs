@@ -143,17 +143,6 @@ namespace FastStream
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(Span<byte> value)
-        {
-            var length = value.Length;
-            this.EnshureCapacity(length);
-
-            var destination = this.buffer.AsSpan().Slice((int)this.currentPosition);
-            value.CopyTo(destination);
-            this.currentPosition += length;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(byte value)
         {
             this.EnshureCapacity(1);
