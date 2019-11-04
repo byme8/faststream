@@ -12,7 +12,6 @@ namespace FastStream.Tests
     {
         public class Writers
         {
-
             [Fact]
             public void Empty()
             {
@@ -24,9 +23,35 @@ namespace FastStream.Tests
             }
 
             [Fact]
+            public void Byte()
+            {
+                byte digit = 10;
+
+                var writer = new FastMemoryWriter();
+                writer.Write(digit);
+                var result = writer.ToArray();
+
+                Assert.True(result.First() == digit);
+            }
+
+
+            [Fact]
             public void Int16()
             {
                 short digit = 10;
+
+                var writer = new FastMemoryWriter();
+                writer.Write(digit);
+                var result = writer.ToArray();
+
+                var value = BitConverter.GetBytes(digit);
+                Assert.True(value.SequenceEqual(result));
+            }
+
+            [Fact]
+            public void UInt16()
+            {
+                ushort digit = 10;
 
                 var writer = new FastMemoryWriter();
                 writer.Write(digit);
@@ -48,11 +73,37 @@ namespace FastStream.Tests
                 var value = BitConverter.GetBytes(digit);
                 Assert.True(value.SequenceEqual(result));
             }
+            
+            [Fact]
+            public void UInt32()
+            {
+                uint digit = 10;
+
+                var writer = new FastMemoryWriter();
+                writer.Write(digit);
+                var result = writer.ToArray();
+
+                var value = BitConverter.GetBytes(digit);
+                Assert.True(value.SequenceEqual(result));
+            }
 
             [Fact]
             public void Int64()
             {
                 long digit = 10;
+
+                var writer = new FastMemoryWriter();
+                writer.Write(digit);
+                var result = writer.ToArray();
+
+                var value = BitConverter.GetBytes(digit);
+                Assert.True(value.SequenceEqual(result));
+            }
+
+            [Fact]
+            public void UInt64()
+            {
+                ulong digit = 10;
 
                 var writer = new FastMemoryWriter();
                 writer.Write(digit);
