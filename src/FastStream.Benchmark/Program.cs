@@ -10,8 +10,38 @@ namespace FastStream.Benchmark
     {
         static void Main(string[] args)
         {
-            BenchmarkRunner.Run<FastStreamVSMemoryStream>();
+            BenchmarkRunner.Run<TypesFormattingBenchmark>();
+            //BenchmarkRunner.Run<FastStreamVSMemoryStream>();
             //BenchmarkRunner.Run<FastStreamVSMemoryStreamWithBinaryWriter>();
+        }
+    }
+
+    public class TypesFormattingBenchmark
+    {
+        [Benchmark]
+        public void UShort()
+        {
+            const int count = 10_000;
+            using (var stream = new FastMemoryWriter(count * 5))
+            {
+                for (int i = 0; i < 10_000; i++)
+                {
+                    stream.Write((ushort)257);
+                }
+            }
+        }
+
+        [Benchmark]
+        public void UInteger()
+        {
+            const int count = 10_000;
+            using (var stream = new FastMemoryWriter(count * 5))
+            {
+                for (int i = 0; i < 10_000; i++)
+                {
+                    stream.Write((uint)257);
+                }
+            }
         }
     }
 

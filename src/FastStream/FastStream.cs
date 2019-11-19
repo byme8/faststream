@@ -96,31 +96,75 @@ namespace FastStream
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(short value)
         {
-            this.Write2Bytes((byte*)&value);
+            this.EnshureCapacity(2);
+
+            unchecked
+            {
+                this.buffer[this.currentPosition] = (byte)value;
+                this.buffer[this.currentPosition + 1] = (byte)(value >> 8);
+            }
+
+            this.currentPosition += 2;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(ushort value)
         {
-            this.Write2Bytes((byte*)&value);
+            this.EnshureCapacity(2);
+
+            unchecked
+            {
+                this.buffer[this.currentPosition] = (byte)value;
+                this.buffer[this.currentPosition + 1] = (byte)(value >> 8);
+            }
+
+            this.currentPosition += 2;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(char value)
         {
-            this.Write2Bytes((byte*)&value);
+            this.EnshureCapacity(2);
+
+            unchecked
+            {
+                this.buffer[this.currentPosition] = (byte)value;
+                this.buffer[this.currentPosition + 1] = (byte)(value >> 8);
+            }
+
+            this.currentPosition += 2;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(int value)
         {
-            this.Write4Bytes((byte*)&value);
+            this.EnshureCapacity(4);
+
+            unchecked
+            {
+                this.buffer[this.currentPosition] = (byte)value;
+                this.buffer[this.currentPosition + 1] = (byte)(value >> 8);
+                this.buffer[this.currentPosition + 2] = (byte)(value >> 16);
+                this.buffer[this.currentPosition + 3] = (byte)(value >> 24);
+            }
+
+            this.currentPosition += 4;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(uint value)
         {
-            this.Write4Bytes((byte*)&value);
+            this.EnshureCapacity(4);
+
+            unchecked
+            {
+                this.buffer[this.currentPosition] = (byte)value;
+                this.buffer[this.currentPosition + 1] = (byte)(value >> 8);
+                this.buffer[this.currentPosition + 2] = (byte)(value >> 16);
+                this.buffer[this.currentPosition + 3] = (byte)(value >> 24);
+            }
+
+            this.currentPosition += 4;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -138,7 +182,7 @@ namespace FastStream
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(float value)
         {
-            this.Write4Bytes((byte*)&value);
+            this.Write4BytesFromPointer((byte*)&value);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -194,7 +238,7 @@ namespace FastStream
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void Write2Bytes(byte* p)
+        private unsafe void Write2BytesFromPointer(byte* p)
         {
             this.EnshureCapacity(2);
 
@@ -205,7 +249,7 @@ namespace FastStream
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void Write4Bytes(byte* p)
+        private unsafe void Write4BytesFromPointer(byte* p)
         {
             this.EnshureCapacity(4);
 
