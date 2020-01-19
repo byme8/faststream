@@ -3,7 +3,6 @@ using System.Buffers;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace FastStream
 {
@@ -78,7 +77,7 @@ namespace FastStream
 
             return resultBuffer;
         }
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(string value)
         {
@@ -235,17 +234,6 @@ namespace FastStream
             this.buffer = newBuffer;
             this.currentPosition = newPosition;
             this.maxBufferIndex = this.buffer.Length - 1;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void Write2BytesFromPointer(byte* p)
-        {
-            this.EnshureCapacity(2);
-
-            this.buffer[this.currentPosition] = *p;
-            this.buffer[this.currentPosition + 1] = *(p + 1);
-
-            this.currentPosition += 2;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

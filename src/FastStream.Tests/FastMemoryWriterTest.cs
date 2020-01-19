@@ -1,8 +1,10 @@
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Sdk;
 
@@ -73,7 +75,7 @@ namespace FastStream.Tests
                 var value = BitConverter.GetBytes(digit);
                 Assert.True(value.SequenceEqual(result));
             }
-            
+
             [Fact]
             public void UInt32()
             {
@@ -157,7 +159,7 @@ namespace FastStream.Tests
             [Fact]
             public void Bytes()
             {
-                var bytes = new byte[] { 10, 10, 11, 12 };
+                var bytes = new byte[] {10, 10, 11, 12};
 
                 var writer = new FastMemoryWriter();
                 writer.Write(bytes);
@@ -172,13 +174,81 @@ namespace FastStream.Tests
             [Fact]
             public void Bytesv2()
             {
-                var bytes = new byte[] { 10, 10, 11, 12 };
+                var bytes = new byte[] {10, 10, 11, 12};
 
                 var writer = new FastMemoryWriter();
                 writer.Write(bytes, 0, bytes.Length);
                 var result = writer.ToArray();
 
                 Assert.True(bytes.SequenceEqual(result));
+            }
+
+            [Fact]
+            public void Bool()
+            {
+                var writer = new FastMemoryWriter();
+                writer.Write(true);
+                writer.Write(false);
+                var result = writer.ToArray();
+
+                Assert.True(result[0] == 1);
+                Assert.True(result[1] == 0);
+            }
+
+            [Fact]
+            public void Char()
+            {
+                var writer = new FastMemoryWriter();
+                writer.Write('a');
+                var result = writer.ToArray();
+
+                Assert.True(result[0] == (byte) 'a');
+            }
+
+            [Fact]
+            public void Merge()
+            {
+                var bytes = new byte[] {10, 10};
+
+                var writer1 = new FastMemoryWriter();
+                writer1.Write(bytes);
+                
+                var writer2 = new FastMemoryWriter();
+                var result = writer2.Merge(writer1);
+
+                Assert.Equal(bytes, result);
+            }
+            
+            [Fact]
+            public void CopyTo()
+            {
+                var bytes = new byte[] {10, 10};
+             
+                var writer = new FastMemoryWriter();
+                writer.Write(bytes);
+                writer.Seek(0, SeekOrigin.Begin);
+                
+                var stream = new MemoryStream();
+                writer.CopyTo(stream);
+
+                var result = stream.ToArray();
+                Assert.Equal(bytes, result);
+            }
+            
+            [Fact]
+            public async Task CopyToAsync()
+            {
+                var bytes = new byte[] {10, 10};
+             
+                var writer = new FastMemoryWriter();
+                writer.Write(bytes);
+                writer.Seek(0, SeekOrigin.Begin);
+                             
+                var stream = new MemoryStream();
+                await writer.CopyToAsync(stream);
+
+                var result = stream.ToArray();
+                Assert.Equal(bytes, result);
             }
         }
 
@@ -188,7 +258,6 @@ namespace FastStream.Tests
             [InlineData(10)]
             [InlineData(10_000)]
             [InlineData(1_000_000)]
-
             public void AbleToProcess(int size)
             {
                 var count = 100;
