@@ -46,18 +46,18 @@ namespace FastStream.Benchmark
     }
 
     [MemoryDiagnoser]
-    public class FastStreamVSMemoryStreamWithBinaryWriter
+    public class FastStreamVsMemoryStreamWithBinaryWriter
     {
-        private RecyclableMemoryStreamManager manager;
-        private ArrayPool<byte> hugeArrayPool;
+        private RecyclableMemoryStreamManager _manager;
+        private ArrayPool<byte> _hugeArrayPool;
 
         [Params(10, 100, 1000)]
         public int ItemCount { get; set; }
 
-        public FastStreamVSMemoryStreamWithBinaryWriter()
+        public FastStreamVsMemoryStreamWithBinaryWriter()
         {
-            this.manager = new RecyclableMemoryStreamManager();
-            this.hugeArrayPool = ArrayPool<byte>.Create(int.MaxValue, 10);
+            this._manager = new RecyclableMemoryStreamManager();
+            this._hugeArrayPool = ArrayPool<byte>.Create(int.MaxValue, 10);
         }
 
         [Benchmark]
@@ -83,7 +83,7 @@ namespace FastStream.Benchmark
         {
             for (int j = 0; j < 10; j++)
             {
-                using (var memory = this.manager.GetStream())
+                using (var memory = this._manager.GetStream())
                 using (var writer = new BinaryWriter(memory))
                 {
                     for (int i = 0; i < this.ItemCount; i++)
@@ -101,7 +101,7 @@ namespace FastStream.Benchmark
         {
             for (int j = 0; j < 10; j++)
             {
-                using (var memory = new FastMemoryWriter(this.hugeArrayPool))
+                using (var memory = new FastMemoryWriter(this._hugeArrayPool))
                 using (var writer = new BinaryWriter(memory))
                 {
                     for (int i = 0; i < this.ItemCount; i++)
@@ -119,7 +119,7 @@ namespace FastStream.Benchmark
         {
             for (int j = 0; j < 10; j++)
             {
-                using (var memory = new FastMemoryWriter(this.hugeArrayPool))
+                using (var memory = new FastMemoryWriter(this._hugeArrayPool))
                 {
                     for (int i = 0; i < this.ItemCount; i++)
                     {
@@ -133,9 +133,9 @@ namespace FastStream.Benchmark
     }
 
     [MemoryDiagnoser]
-    public class FastStreamVSMemoryStream
+    public class FastStreamVsMemoryStream
     {
-        private ArrayPool<byte> hugeArrayPool;
+        private ArrayPool<byte> _hugeArrayPool;
 
         [Params(100_000)]
         public int Size { get; set; }
@@ -143,9 +143,9 @@ namespace FastStream.Benchmark
         [Params(1000)]
         public int ItemCount { get; set; }
 
-        public FastStreamVSMemoryStream()
+        public FastStreamVsMemoryStream()
         {
-            this.hugeArrayPool = ArrayPool<byte>.Create(int.MaxValue, 10);
+            this._hugeArrayPool = ArrayPool<byte>.Create(int.MaxValue, 10);
         }
 
 
@@ -194,7 +194,7 @@ namespace FastStream.Benchmark
             var data = new byte[this.Size];
             for (int j = 0; j < 10; j++)
             {
-                using (var memory = new FastMemoryWriter(this.hugeArrayPool))
+                using (var memory = new FastMemoryWriter(this._hugeArrayPool))
                 {
                     for (int i = 0; i < this.ItemCount; i++)
                     {

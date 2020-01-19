@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Linq;
+﻿using System.Linq;
 using Xunit;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace FastStream.Tests
@@ -18,7 +13,7 @@ namespace FastStream.Tests
             var memory = new FastMemoryWriter();
 
             memory.Write(text);
-            memory.Seek(0, System.IO.SeekOrigin.Begin);
+            memory.Seek(0, SeekOrigin.Begin);
 
             var reader = new FastReader(memory);
             var result = reader.ReadString();

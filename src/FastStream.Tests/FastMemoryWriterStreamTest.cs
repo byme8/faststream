@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -30,7 +27,6 @@ namespace FastStream.Tests
         public void ReadOnEmpty()
         {
             var text = "JonnoJ";
-            var textBytes = Encoding.UTF8.GetBytes(text);
 
             var stream = new FastMemoryWriter();
             stream.Write(text);
