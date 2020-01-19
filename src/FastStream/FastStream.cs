@@ -270,7 +270,7 @@ namespace FastStream
         {
         }
         
-        public void WriteToSteam(Stream stream)
+        public void CopyToStream(Stream stream)
         {
             stream.Write(_buffer, 0, (int)_currentPosition);
         }
