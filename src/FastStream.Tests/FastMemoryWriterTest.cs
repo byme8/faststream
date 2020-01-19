@@ -247,6 +247,21 @@ namespace FastStream.Tests
                 var result = stream.ToArray();
                 Assert.Equal(bytes, result);
             }
+            
+            [Fact]
+            public void WriteToStream()
+            {
+                var bytes = new byte[] {10, 10};
+             
+                var writer = new FastMemoryWriter();
+                writer.Write(bytes);
+                             
+                var stream = new MemoryStream();
+                writer.WriteToSteam(stream);
+
+                var result = stream.ToArray();
+                Assert.Equal(bytes, result);
+            }
         }
 
         public class ChunkSize

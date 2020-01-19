@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace FastStream
@@ -267,6 +268,11 @@ namespace FastStream
 
         public override void Flush()
         {
+        }
+        
+        public void WriteToSteam(Stream stream)
+        {
+            stream.Write(_buffer, 0, (int)_currentPosition);
         }
 
         public override int Read(byte[] inputBuffer, int offset, int count)

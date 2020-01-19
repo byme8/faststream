@@ -14,7 +14,7 @@
     <PackageTags>MemoryStream</PackageTags>
     <LangVersion>8</LangVersion>
     <Nullable>enable</Nullable>
-    <PackageVersion>1.4.1</PackageVersion>
+    <PackageVersion>1.4.2</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
