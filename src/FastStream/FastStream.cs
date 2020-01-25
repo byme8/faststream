@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FastStream
 {
@@ -270,9 +271,14 @@ namespace FastStream
         {
         }
         
-        public void CopyToStream(Stream stream)
+        public void FastCopyTo(Stream stream)
         {
             stream.Write(_buffer, 0, (int)_currentPosition);
+        }
+
+        public Task FastCopyToAsync(Stream stream)
+        {
+            return stream.WriteAsync(_buffer, 0, (int)_currentPosition);
         }
 
         public override int Read(byte[] inputBuffer, int offset, int count)

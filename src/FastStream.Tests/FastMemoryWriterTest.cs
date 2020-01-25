@@ -257,7 +257,7 @@ namespace FastStream.Tests
                 writer.Write(bytes);
                              
                 var stream = new MemoryStream();
-                writer.CopyToStream(stream);
+                writer.FastCopyTo(stream);
 
                 var result = stream.ToArray();
                 Assert.Equal(bytes, result);
