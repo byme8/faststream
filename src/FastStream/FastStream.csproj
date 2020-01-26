@@ -5,7 +5,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Authors>byme</Authors>
     <Company />
-    <Version>1.5</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Fast replacement for MemoryStream.</Description>
     <PackageProjectUrl>https://github.com/byme8/faststream</PackageProjectUrl>
@@ -14,7 +13,7 @@
     <PackageTags>MemoryStream</PackageTags>
     <LangVersion>8</LangVersion>
     <Nullable>enable</Nullable>
-    <PackageVersion>1.4.3</PackageVersion>
+    <PackageVersion>1.5</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
