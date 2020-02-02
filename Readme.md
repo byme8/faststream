@@ -3,6 +3,8 @@ The main power gain happened because classic allocations is replaced by ArrayPoo
 
 [![Build status](https://ci.appveyor.com/api/projects/status/mxi7d4xhe7afjpw0?svg=true)](https://ci.appveyor.com/project/byme8/faststream)
 
+[![Tests](https://img.shields.io/appveyor/tests/byme8/faststream/master?compact_message)](https://img.shields.io/appveyor/tests/byme8/faststream/master?compact_message)
+
 
 ### Nuget
 You can install it via nuget. Search for ``` FastStream ```.
