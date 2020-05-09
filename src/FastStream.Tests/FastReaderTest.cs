@@ -22,6 +22,21 @@ namespace FastStream.Tests
         }
 
         [Fact]
+        public void ReadStringUA()
+        {
+            var text = "привіт";
+            var memory = new FastMemoryWriter();
+
+            memory.Write(text);
+            memory.Seek(0, SeekOrigin.Begin);
+
+            var reader = new FastReader(memory);
+            var result = reader.ReadString();
+
+            Assert.Equal(text, result);
+        }
+
+        [Fact]
         public void ReadByteArray()
         {
             var bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, };

@@ -83,8 +83,8 @@ namespace FastStream
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(string value)
         {
-            Write(value.Length);
             var bytes = Encoding.UTF8.GetBytes(value);
+            Write(bytes.Length);
             Write(bytes);
         }
 
